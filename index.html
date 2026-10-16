@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Superprompt</title>
+<meta name="description" content="Prompts curtos, precisos e sem alucinação.">
+<meta name="theme-color" content="#15112a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<header class="fw">
+  <div class="brand"><span class="mark" aria-hidden="true">✦</span><b>Superprompt</b></div>
+  <button class="pill" id="install" hidden>Instalar</button>
+  <button class="pill" id="share">Compartilhar</button>
+  <button class="pill" id="theme">☀️ Modo claro</button>
+</header>
+
+<section class="hero fw">
+  <h1>Prompts curtos. Respostas sem invenção.</h1>
+  <p>Três lacunas geram um prompt estruturado, com regras contra alucinação e viés.</p>
+  <div class="stk" aria-hidden="true"><span class="big">3</span><small>lacunas</small></div>
+</section>
+
+<section class="card" aria-label="Formulário">
+  <div class="g2"><select id="tpl" aria-label="Modelo pronto"><option value="">Modelo pronto (opcional)</option></select><select id="modo" aria-label="Tipo de pedido"><option value="auto">Tipo: automático</option><option value="analisar">Tipo: analisar material</option><option value="criar">Tipo: criar texto</option><option value="imagem">Tipo: criar imagem</option></select></div>
+  <div class="st" style="margin-top:20px"><span>1 Tarefa *</span><small>um comando, verbo no imperativo</small></div>
+  <textarea id="tarefa" aria-label="Tarefa" placeholder="Ex.: Resuma o texto em 5 tópicos para iniciantes."></textarea>
+  <div class="st"><span>2 Material</span><small id="mlbl">a fonte que a IA deve usar</small></div>
+  <textarea id="material" rows="4" aria-label="Material" placeholder="Cole o texto ou os dados. Sem material, a IA usa só a memória dela."></textarea>
+  <div id="imgf" hidden><div class="st"><span>Imagem</span><small>o que a IA não adivinha</small></div>
+    <div class="g2"><input id="cores" aria-label="Cores" placeholder="Cores. Ex.: azul #0a4da2 e branco"><input id="estilo" aria-label="Estilo" placeholder="Estilo. Ex.: flat, limpo"></div>
+    <input id="textoarte" aria-label="Texto na arte" placeholder="Texto exato que aparece na arte">
+    <input id="evitar" aria-label="Evitar" placeholder="Evitar. Ex.: fotos de pessoas, excesso de texto"></div>
+  <div class="st"><span>3 Saída</span><small>formato e tamanho</small></div>
+  <input id="formato" list="fmts" aria-label="Formato da saída" placeholder="Ex.: lista numerada, até 100 palavras">
+  <datalist id="fmts"><option value="Lista numerada, até 100 palavras"><option value="Tabela em Markdown"><option value="JSON válido, sem texto extra"><option value="Um parágrafo de até 80 palavras"><option value="Passo a passo numerado"><option value="Imagem 1080x1080, estilo limpo"><option value="Imagem vertical 1080x1920"></datalist>
+  <div class="st"><span>Rigor</span><small>blindagem contra erro e viés</small></div>
+  <div class="chips" id="rules"></div>
+  <details>
+    <summary>Mais opções</summary>
+    <div class="g2">
+      <select id="tecnica" aria-label="Técnica"><option value="direto">Técnica: direta</option><option value="pensar">Pensar antes de responder</option><option value="verificar">Auto-verificação</option><option value="estrito">Formato estrito</option></select>
+      <select id="alvo" aria-label="Estilo do prompt"><option value="tags">Estilo: tags (universal)</option><option value="md">Estilo: Markdown</option></select>
+      <select id="tam" aria-label="Tamanho"><option value="completo">Tamanho: completo</option><option value="compacto">Tamanho: compacto</option></select>
+    </div>
+    <input id="papel" aria-label="Papel" placeholder="Papel. Ex.: analista de dados">
+    <input id="publico" aria-label="Público" placeholder="Público. Ex.: iniciantes">
+    <textarea id="exemplo" aria-label="Exemplo" placeholder="Exemplo da saída ideal (melhora muito a precisão)"></textarea>
+    <input id="tom" aria-label="Idioma e tom" value="Português do Brasil, objetivo">
+    <textarea id="extra" aria-label="Proibições extras" placeholder="Proibições extras. Ex.: Não use jargão."></textarea>
+    <div class="row"><button class="btn" id="exp">Exportar modelos</button><button class="btn" id="imp">Importar</button><input type="file" id="file" accept=".json,application/json" hidden></div>
+  </details>
+  <div class="row" style="margin-top:20px"><button class="btn" id="clear">Limpar</button><button class="btn" id="save">Salvar modelo</button></div>
+</section>
+
+<aside>
+  <section class="card" aria-label="Resultado">
+    <div class="ph"><h2>Seu superprompt</h2><span class="cnt" id="pill">0</span></div>
+    <div id="out" aria-live="polite"></div>
+    <div class="meter" role="progressbar" aria-label="Qualidade" aria-valuemin="0" aria-valuemax="100"><i id="bar"></i></div>
+    <div class="mt"><span id="hint"></span><span id="sc"></span></div>
+    <ul class="tips" id="tips"></ul>
+    <div id="vars" class="g2" style="margin-bottom:12px" hidden></div>
+    <div class="row"><button class="btn f" id="copy">Copiar prompt</button><button class="btn" id="dl">Baixar .txt</button></div>
+    <div class="row" style="margin-top:10px"><button class="pill" id="oc">Abrir no Claude ↗</button><button class="pill" id="og">Abrir no ChatGPT ↗</button></div>
+    <p class="empty" style="margin-top:10px"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> copia</p>
+  </section>
+  <section class="card" aria-label="Histórico">
+    <div class="ph"><h2>Histórico</h2><button class="pill" id="hclr">Limpar</button></div>
+    <ul id="hist"></ul>
+  </section>
+</aside>
+</main>
+<div id="toast" role="status"></div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
